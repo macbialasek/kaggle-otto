@@ -29,7 +29,7 @@ data.frame(lda.pred)[1:5,]
 table(lda.pred$class,dataTestSample$target)
 mean(lda.pred$class==dataTestSample$target)
 
-#test for submission (I don't know, if posterior means probabilities...
+#test for submission
 
 predicted <- predict(lda.fit, newdata=dataTest, type="prob")$class
 
@@ -39,3 +39,4 @@ submit[,2:10] <- predict(lda.fit, newdata=dataTest, type="prob")$posterior
 
 write.csv(submit, 'submit.csv', quote=FALSE, row.names = FALSE)
 
+#1.05 on benchmark in Kaggle
