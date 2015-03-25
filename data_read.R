@@ -5,21 +5,36 @@ setwd("C:/Users/maciek/Desktop/Studia dok/Courses/kaggle-otto/data")
 # Imported libraries:
 
 library(dplyr)
+library(corrplot)
+library(caret)
 
 # Read train data:
 
-dataTrain <- read.csv("train.csv")
+dataTrain <- read.csv("train.csv")[,-1]
+dataTest <- read.csv("test.csv")[-1]
+submit <- read.csv("sampleSubmission.csv")
 str(dataTrain)
 
-# Sample data for quick manipulations/plotting:
+# Sample data:
 
-dataTrainSample <- dataTrain[sample(nrow(dataTrain), 5000), ]
+dataTrainSample <- dataTrain[sample(nrow(dataTrain), 10000), ]
 
-#Is there method to visualise data for insight?
-#These two plots looks similar, so only information I can get from them is that my sample
-#representative
+dataTestSample <- dataTrain[sample(nrow(dataTrain), 5000), ]
 
-plot(~target,dataTrainSample)
-plot(~target,dataTrain)
+# Data scaling, centering, correlation matrix
+train.scaled <- scale(dataTrain[1:93],center=TRUE,scale=TRUE)
+corMatTrain <- cor(train.scaled)
+corrplot(corMatTrain, order = "hclust")
+
+# Correlation filter
+
+highlyCor <- findCorrelation(corMatTrain, 0.70)
+datMyFiltered.scale <- train.scaled[,-highlyCor]
+corMatTrain <- cor(datMyFiltered.scale)
+corrplot(corMatTrain, order = "hclust")
+
+# train data after filtering
+
+dataTrain.scaled <- data.frame(cbind(datMyFiltered.scale,dataTrain$target))
 
 
